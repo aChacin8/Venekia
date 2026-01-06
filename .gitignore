@@ -9,3 +9,5 @@ obj/
 *.sln.docstates
 
 *.nupkg
+
+.gitignore

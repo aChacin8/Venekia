@@ -4,7 +4,7 @@ using Venekia.Application.Interfaces.Auth;
 using Venekia.Application.DTOs.Auth;
 using Venekia.Domain.Entities;
 
-namespace Venekia.Api.Controllers
+namespace Venekia.Api.Controllers.Auth
 {
     [ApiController]
     [Route("api/users")]

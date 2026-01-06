@@ -47,6 +47,12 @@ builder.Services.AddDbContext<VenekiaDb>(options =>
             );
             break;
 
+        case "SqlServer":
+            options.UseNpgsql(
+                builder.Configuration.GetConnectionString("SqlServer")
+            );
+            break;
+
         default:
             throw new Exception("Database provider not configured");
     }

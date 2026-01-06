@@ -16,9 +16,9 @@ namespace Venekia.Infrastructure.Data
         {
             modelBuilder.Entity<User> (entity =>
             {
-                entity.ToTable("users");
+                entity.ToTable("users", "auth");
                 entity.HasKey(u => u.Id);
-                entity.Property(u => u.Id).HasColumnName("user_id").ValueGeneratedNever();
+                entity.Property(u => u.Id).HasColumnName("id").ValueGeneratedNever();
                 entity.Property(u => u.FirstName).IsRequired().HasMaxLength(100).HasColumnName("first_name");
                 entity.Property(u => u.LastName).IsRequired().HasMaxLength(100).HasColumnName("last_name");
                 entity.Property(u => u.Email).IsRequired().HasMaxLength(100).HasColumnName("email");
