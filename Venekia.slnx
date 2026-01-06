@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Venekia.Api/Venekia.Api.csproj" />
+  <Project Path="Venekia.Application/Venekia.Application.csproj" />
+  <Project Path="Venekia.Domain/Venekia.Domain.csproj" />
+  <Project Path="Venekia.Infrastructure/Venekia.Infrastructure.csproj" />
+</Solution>
