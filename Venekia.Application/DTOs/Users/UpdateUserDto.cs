@@ -1,4 +1,4 @@
-namespace Venekia.Application.DTOs.Auth
+namespace Venekia.Application.DTOs.Users
 {
     public class UpdateUserDto
     {

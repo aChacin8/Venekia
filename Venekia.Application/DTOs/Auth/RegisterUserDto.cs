@@ -1,3 +1,5 @@
+using Venekia.Domain.Entities.Users;
+
 namespace Venekia.Application.DTOs.Auth
 {
     public class RegisterUserDto
@@ -9,4 +11,4 @@ namespace Venekia.Application.DTOs.Auth
         public string?  PhoneNumber { get; set; }
         public string? Address { get; set; }
     }
-}
+}   

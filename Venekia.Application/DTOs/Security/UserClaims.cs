@@ -1,4 +1,4 @@
-namespace Venekia.Application.DTOs.Auth
+namespace Venekia.Application.DTOs.Security
 {
     public class UserClaims
     {
@@ -6,3 +6,4 @@ namespace Venekia.Application.DTOs.Auth
         public string Email { get; init; } = default!;
     }
 }
+
