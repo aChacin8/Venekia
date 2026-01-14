@@ -6,8 +6,9 @@ using System.Text;
 using Venekia.Application.Interfaces.Auth;
 using Venekia.Application.Services.Auth;
 using Venekia.Infrastructure.Data;
-using Venekia.Infrastructure.Repositories.Auth;
 using Venekia.Infrastructure.Services.Auth;
+using Venekia.Infrastructure.Repositories.Users;
+using Venekia.Application.Interfaces.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,19 @@ builder.Services.AddEndpointsApiExplorer();
 // Genera la UI de Swagger para probar la API
 builder.Services.AddSwaggerGen();
 
+//Cors para futura implementacion con frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:5173")
+
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 #endregion
 
 #region Database (EF Core + MySQL)
@@ -32,30 +46,10 @@ var provider = builder.Configuration["Database:Provider"];
 
 builder.Services.AddDbContext<VenekiaDb>(options =>
 {
-    switch (provider)
-    {
-        case "MySql":
-            options.UseMySql(
-                builder.Configuration.GetConnectionString("MySql"),
-                new MySqlServerVersion(new Version(8, 0, 36))
-            );
-            break;
-
-        case "Postgres":
-            options.UseNpgsql(
-                builder.Configuration.GetConnectionString("Postgres")
-            );
-            break;
-
-        case "SqlServer":
-            options.UseNpgsql(
-                builder.Configuration.GetConnectionString("SqlServer")
-            );
-            break;
-
-        default:
-            throw new Exception("Database provider not configured");
-    }
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("SqlServer")
+        ?? throw new InvalidOperationException("Connection string 'SqlServer' not found")
+    );
 });
 
 
