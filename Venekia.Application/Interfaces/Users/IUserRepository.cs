@@ -1,9 +1,7 @@
-using System.Threading.Tasks;
-
-using Venekia.Domain.Entities;
+using Venekia.Domain.Entities.Users;
 
 
-namespace Venekia.Application.Interfaces.Auth
+namespace Venekia.Application.Interfaces.Users
 {
     public interface IUserRepository
     {
@@ -11,5 +9,6 @@ namespace Venekia.Application.Interfaces.Auth
         Task UpdateAsync (User user);
         Task <User?> GetByIdAsync (Guid Id);
         Task <User?> GetByEmailAsync (string email);
+        Task DeactivateUserAsync(Guid Id);
     }
 }   
