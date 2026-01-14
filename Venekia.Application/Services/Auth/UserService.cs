@@ -1,6 +1,9 @@
 using Venekia.Application.DTOs.Auth;
+using Venekia.Application.DTOs.Users;
+using Venekia.Application.DTOs.Security;
 using Venekia.Application.Interfaces.Auth;
-using Venekia.Domain.Entities;
+using Venekia.Application.Interfaces.Users;
+using Venekia.Domain.Entities.Users;
 
 namespace Venekia.Application.Services.Auth
 {
@@ -37,14 +40,17 @@ namespace Venekia.Application.Services.Auth
         {
             var user = await _userRepository.GetByEmailAsync(loginUserDto.Email);
 
-            if(user == null)
-                throw new UnauthorizedAccessException ("Invalid Credentials");
+            if (user == null)
+                throw new UnauthorizedAccessException("Invalid Credentials");
 
             var isValid = _passwordHash.VerifyPassword(loginUserDto.Password, user.PasswordHash);
 
             if(!isValid)
                 throw new UnauthorizedAccessException ("Invalid Credentials");
-            
+
+            if (!user.IsActive())
+                throw new UnauthorizedAccessException("User is inactive");
+
             var identity = new UserClaims
             {
                 Id = user.Id,
@@ -53,29 +59,42 @@ namespace Venekia.Application.Services.Auth
             return _jwtService.GenerateToken(identity);
         }
 
-        public async Task <string?> GetByIdAsync(Guid Id)
+        public async Task <UserResponseDto?> GetByIdAsync(string token)
         {
-            var user = await _userRepository.GetByIdAsync(Id);
+            var claims = _jwtService.VerifyToken(token);
+
+            var user = await _userRepository.GetByIdAsync(claims.Id);
             if (user == null)
                 throw new Exception("User not found");
 
-            return user.ToString();
+            return new UserResponseDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                Status = user.Status.ToString()
+            };
         }
 
-        public async Task <string?> UpdateUser(UpdateUserDto updateUserDto)
+        public async Task<string?> UpdateUser(string token, UpdateUserDto updateUserDto)
         {
-            var user = await _userRepository.GetByIdAsync(updateUserDto.Id);
+            var claims = _jwtService.VerifyToken(token);
 
-            if(user == null)
-                throw new Exception ("User not found");
-            
+            var user = await _userRepository.GetByIdAsync(claims.Id);
+
+            if (user == null)
+                throw new Exception("User not found");
+
             var isValidPassword = _passwordHash.VerifyPassword(updateUserDto.CurrentPassword!, user.PasswordHash);
             if (!isValidPassword)
-                throw new UnauthorizedAccessException ("Invalid Password");
+                throw new UnauthorizedAccessException("Invalid Password");
 
             if (!string.IsNullOrWhiteSpace(updateUserDto.FirstName))
                 user.UpdateFirstName(updateUserDto.FirstName);
-            
+
             if (!string.IsNullOrWhiteSpace(updateUserDto.LastName))
                 user.UpdateLastName(updateUserDto.LastName);
 
@@ -84,9 +103,12 @@ namespace Venekia.Application.Services.Auth
 
             if (!string.IsNullOrWhiteSpace(updateUserDto.Address))
                 user.UpdateAddress(updateUserDto.Address);
-            
+
             if (!string.IsNullOrWhiteSpace(updateUserDto.NewPassword))
             {
+                //if (user.Status == UserStatus.ChangePassword)
+                //    throw new InvalidOperationException("Status Changed. Update your password using ChangePassword flow");
+
                 var newPasswordHash = _passwordHash.HashPassword(updateUserDto.NewPassword);
                 user.UpdatePassword(newPasswordHash);
             }
