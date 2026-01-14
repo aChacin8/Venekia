@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
-using Venekia.Domain.Entities;
+using Venekia.Domain.Entities.Users;
 using Venekia.Infrastructure.Data;
-using Venekia.Application.Interfaces.Auth;
+using Venekia.Application.Interfaces.Users;
 
 
-namespace Venekia.Infrastructure.Repositories.Auth
+namespace Venekia.Infrastructure.Repositories.Users
 {
     public class UserRepository : IUserRepository
     {
@@ -37,6 +36,17 @@ namespace Venekia.Infrastructure.Repositories.Auth
         public async Task<User?> GetByIdAsync (Guid Id)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Id == Id);
+        }
+
+        public async Task DeactivateUserAsync(Guid id)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id)
+                ?? throw new Exception("User not found");
+
+            user.Deactivate();
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
     }
 }
