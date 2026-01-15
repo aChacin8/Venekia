@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-
 using Venekia.Domain.Entities.Users;
+using Venekia.Infrastructure.Data.Users;
 
 namespace Venekia.Infrastructure.Data
 {
@@ -10,27 +10,11 @@ namespace Venekia.Infrastructure.Data
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users => Set<User>(); // Mapea en la entidad de EfCore de User.
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder) // Configura las entidades usando las configuraciones definidas.
         {
-            modelBuilder.Entity<User> (entity =>
-            {
-                entity.ToTable("users", "dbo");
-                entity.HasKey(u => u.Id);
-                entity.Property(u => u.Id).HasColumnName("id").ValueGeneratedNever();
-                entity.Property(u => u.FirstName).IsRequired().HasMaxLength(100).HasColumnName("first_name");
-                entity.Property(u => u.LastName).IsRequired().HasMaxLength(100).HasColumnName("last_name");
-                entity.Property(u => u.Email).IsRequired().HasMaxLength(100).HasColumnName("email");
-                entity.HasIndex(u => u.Email).IsUnique();
-                entity.Property(u => u.PasswordHash).IsRequired().HasMaxLength(250).HasColumnName("password");
-                entity.Property(u => u.Address).HasMaxLength(250).HasColumnName("address");
-                entity.Property(u => u.PhoneNumber).HasMaxLength(250).HasColumnName("phone");
-                entity.Property(u => u.Status).IsRequired().HasColumnName("status");
-                entity.Property(u => u.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("GETUTCDATE()");
-                entity.Property(u => u.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("GETUTCDATE()");
-                entity.Property(u => u.DeactivatedAt).HasColumnName("deactivated_at");
-            });
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(VenekiaDb).Assembly); // Aplica todas las configuraciones que tengan IEntityTypeConfiguration en el ensamblado actual.
         }
     }
 }
