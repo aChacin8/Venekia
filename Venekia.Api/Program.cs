@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
 });
 #endregion
 
-#region Database (EF Core + MySQL)
+#region Database 
 
 // Registro del DbContext
 // AddDbContext => EF Core gestiona el ciclo de vida (Scoped por request)
