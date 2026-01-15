@@ -1,3 +1,5 @@
+using Venekia.Domain.Entities.Finance.Wallets;
+
 namespace Venekia.Domain.Entities.Users
 {
     public class User
@@ -15,6 +17,7 @@ namespace Venekia.Domain.Entities.Users
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime? DeactivatedAt { get; private set; }
+        public Wallet Wallet { get; private set; } = null!;
 
         private User() { }
         public User(string firstName, string lastName, string email, string passwordHash, string? phoneNumber, string? address)
