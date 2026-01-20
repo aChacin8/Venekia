@@ -2,10 +2,9 @@
 {
     public class WalletResponseDto
     {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public decimal Balance { get; set; }
-        public string Currency { get; set; } = null!;
-        public string Status { get; set; } = null!;
+        Guid Id { get; set; }
+        decimal Balance { get; set; }
+        string Currency { get; set; } = null!;
+        string Status { get; set; } = null!;
     }
 }
