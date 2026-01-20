@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Venekia.Domain.Entities.Finance.Wallets;
 using Venekia.Domain.Entities.Users;
 using Venekia.Infrastructure.Data.Users;
 
@@ -11,6 +12,7 @@ namespace Venekia.Infrastructure.Data
         }
 
         public DbSet<User> Users => Set<User>(); // Mapea en la entidad de EfCore de User.
+        public DbSet<Wallet> Wallets => Set<Wallet>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) // Configura las entidades usando las configuraciones definidas.
         {
