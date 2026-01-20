@@ -2,8 +2,8 @@
 {
     public enum WalletStatus
     {
-        active = 1,
-        inactive = 2,
-        suspended = 3
+        Active = 1,
+        Inactive = 2,
+        Suspended = 3
     }
 }
