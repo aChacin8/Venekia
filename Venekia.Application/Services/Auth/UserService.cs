@@ -20,7 +20,7 @@ namespace Venekia.Application.Services.Auth
             _jwtService = jwtService; 
         }
 
-        public async Task<string?>RegisterUser(RegisterUserDto registerUserDto)
+        public async Task<UserResponseDto>RegisterUser(RegisterUserDto registerUserDto)
         {
             var existing = await _userRepository.GetByEmailAsync(registerUserDto.Email);
 
@@ -33,7 +33,16 @@ namespace Venekia.Application.Services.Auth
 
             await _userRepository.AddAsync(user);
 
-            return user.ToString();
+            return new UserResponseDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                Status = user.Status.ToString()
+            };
         }
 
         public async Task<string> LoginUser (LoginUserDto loginUserDto)
@@ -59,7 +68,7 @@ namespace Venekia.Application.Services.Auth
             return _jwtService.GenerateToken(identity);
         }
 
-        public async Task <UserResponseDto?> GetByIdAsync(string token)
+        public async Task <UserResponseDto> GetByIdAsync(string token)
         {
             var claims = _jwtService.VerifyToken(token);
 
@@ -79,7 +88,7 @@ namespace Venekia.Application.Services.Auth
             };
         }
 
-        public async Task<string?> UpdateUser(string token, UpdateUserDto updateUserDto)
+        public async Task<UserResponseDto> UpdateUser(string token, UpdateUserDto updateUserDto)
         {
             var claims = _jwtService.VerifyToken(token);
 
@@ -115,7 +124,16 @@ namespace Venekia.Application.Services.Auth
 
             await _userRepository.UpdateAsync(user);
 
-            return user.ToString();
+            return new UserResponseDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                Status = user.Status.ToString()
+            };
         }
     }
 }
