@@ -2,6 +2,6 @@
 {
     public class CreateWalletDto
     {
-        string Currency { get; set; } = null!;
+        public string Currency { get; set; } = null!;
     }
 }
