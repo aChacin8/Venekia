@@ -6,9 +6,9 @@ namespace Venekia.Domain.Entities.Finance.Wallets
     {
         public Guid Id { get; private set; }
         public Guid UserId { get; private set; }
-        public string Currency { get; set; } = null!;
+        public string Currency { get; private set; } = null!;
         public decimal Balance { get; private set; } = 0.00m;
-        public WalletStatus Status { get; set; } = WalletStatus.active;
+        public WalletStatus Status { get; private set; } = WalletStatus.Active;
         public User User { get; private set; } = null!;
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -21,8 +21,51 @@ namespace Venekia.Domain.Entities.Finance.Wallets
             UserId = userId;
             Currency = currency;
             Balance = 0m;
-            Status = WalletStatus.active;
+            Status = WalletStatus.Active;
             CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Credit(decimal amount) //Para agregar fondos a la billetera.
+        {
+            IsActive();
+            
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
+
+            Balance += amount;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Debit(decimal amount) //Para retirar fondos de la billetera.
+        {
+            IsActive();
+
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
+
+            if (amount > Balance)
+                throw new InvalidOperationException("Insufficient funds.");
+
+            Balance -= amount;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        private void IsActive()
+        {
+            if (Status != WalletStatus.Active)
+                throw new InvalidOperationException("Wallet is not active.");
+        }
+
+        public void Suspend()
+        {
+            Status = WalletStatus.Suspended;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Deactivate()
+        {
+            Status = WalletStatus.Inactive;
             UpdatedAt = DateTime.UtcNow;
         }
     }
