@@ -19,13 +19,13 @@ namespace Venekia.Infrastructure.Repositories.Finance.Wallets
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Wallet wallet)
+        public async Task UpdateAsyncWallet(Wallet wallet)
         {
             _context.Wallets.Update(wallet);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Wallet wallet) {
+        public async Task DeleteAsyncWallet(Wallet wallet) {
             _context.Wallets.Remove(wallet);
             await _context.SaveChangesAsync();
         }
