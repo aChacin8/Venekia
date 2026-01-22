@@ -22,6 +22,13 @@ namespace Venekia.Domain.Entities.Users
         private User() { }
         public User(string firstName, string lastName, string email, string passwordHash, string? phoneNumber, string? address)
         {
+            ValidateFirstName(firstName);
+            ValidateLastName(lastName);
+            ValidateEmail(email);
+            ValidatePassword(passwordHash);
+            ValidatePhoneNumber(phoneNumber);
+            ValidateAddress(address);
+
             Id = Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
@@ -32,6 +39,74 @@ namespace Venekia.Domain.Entities.Users
             Status = UserStatus.Active;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        private void ValidateFirstName (string firstName)
+        {
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new Exception("First Name is required");
+
+            if (firstName.Length > 50)
+                throw new Exception("First Name cannot exceed 50 characters");
+
+            if (firstName.Length < 2)
+                throw new Exception("First Name cannot be under 2 characters");
+        }
+
+        private void ValidateLastName(string lastName)
+        {
+            if (string.IsNullOrWhiteSpace(lastName))
+                throw new ArgumentException("Last Name is required");
+
+            if (lastName.Length > 50)
+                throw new ArgumentException("Last Name cannot exceed 50 characters");
+
+            if (lastName.Length < 2)
+                throw new ArgumentException("Last Name cannot be under 2 characters");
+        }
+
+        private void ValidateEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email is required");
+
+            var emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern))
+                throw new ArgumentException("Email format is invalid");
+
+            if (email.Length > 100)
+                throw new ArgumentException ("Email cannot exceed 100 characters");
+        }
+
+        private void ValidatePassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password is required");
+            if (password.Length < 8)
+                throw new ArgumentException("Password must be at least 8 characters long");
+
+            var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, passwordPattern))
+                throw new ArgumentException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
+        }
+
+        private void ValidatePhoneNumber(string? phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                return;
+            var phonePattern = @"^\+?[1-9]\d{1,14}$";
+            if (!System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, phonePattern))
+                throw new ArgumentException("Phone number format is invalid");
+        }
+
+        private void ValidateAddress(string? address)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+                return;
+            if (address.Length > 200)
+                throw new ArgumentException("Address cannot exceed 200 characters");
         }
 
         public void UpdateFirstName(string firstName)
