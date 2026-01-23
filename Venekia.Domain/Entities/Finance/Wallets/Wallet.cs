@@ -17,9 +17,11 @@ namespace Venekia.Domain.Entities.Finance.Wallets
 
         public Wallet(Guid userId, string currency)
         {
+            ValidateCurrency(currency);
+
             Id = Guid.NewGuid();
             UserId = userId;
-            Currency = currency;
+            Currency = currency.ToUpper();
             Balance = 0m;
             Status = WalletStatus.Active;
             CreatedAt = DateTime.UtcNow;
@@ -49,6 +51,16 @@ namespace Venekia.Domain.Entities.Finance.Wallets
 
             Balance -= amount;
             UpdatedAt = DateTime.UtcNow;
+        }
+
+
+        private void ValidateCurrency(string currency)
+        {
+            if (string.IsNullOrWhiteSpace(currency))
+                throw new ArgumentException("Currency cannot be null or empty.", nameof(currency));
+
+            if(currency.Length != 3)
+                throw new ArgumentException("Currency must be a 3-letter ISO code.", nameof(currency));
         }
 
         private void IsActive()
