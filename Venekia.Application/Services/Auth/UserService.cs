@@ -1,6 +1,6 @@
 using Venekia.Application.DTOs.Auth;
-using Venekia.Application.DTOs.Users;
 using Venekia.Application.DTOs.Security;
+using Venekia.Application.DTOs.Users;
 using Venekia.Application.Interfaces.Auth;
 using Venekia.Application.Interfaces.Users;
 using Venekia.Domain.Entities.Users;
@@ -26,6 +26,8 @@ namespace Venekia.Application.Services.Auth
 
             if(existing != null)
                 throw new Exception ("Email already exists");
+
+            ValidatePassword(registerUserDto.Password);
 
             var hashedPassword = _passwordHash.HashPassword(registerUserDto.Password);
 
@@ -134,6 +136,18 @@ namespace Venekia.Application.Services.Auth
                 Address = user.Address,
                 Status = user.Status.ToString()
             };
+        }
+        private void ValidatePassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password is required");
+            if (password.Length < 8)
+                throw new ArgumentException("Password must be at least 8 characters long");
+
+            var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, passwordPattern))
+                throw new ArgumentException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
     }
 }
