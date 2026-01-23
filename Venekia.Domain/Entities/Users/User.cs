@@ -40,6 +40,12 @@ namespace Venekia.Domain.Entities.Users
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public enum UserStatus
+        {
+            Active = 1,
+            Inactive = 2,
+            //ChangePassword = 3
+        }
         private void ValidateFirstName (string firstName)
         {
             if (string.IsNullOrWhiteSpace(firstName))
