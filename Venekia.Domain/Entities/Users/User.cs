@@ -25,7 +25,6 @@ namespace Venekia.Domain.Entities.Users
             ValidateFirstName(firstName);
             ValidateLastName(lastName);
             ValidateEmail(email);
-            ValidatePassword(passwordHash);
             ValidatePhoneNumber(phoneNumber);
             ValidateAddress(address);
 
@@ -77,19 +76,6 @@ namespace Venekia.Domain.Entities.Users
 
             if (email.Length > 100)
                 throw new ArgumentException ("Email cannot exceed 100 characters");
-        }
-
-        private void ValidatePassword(string password)
-        {
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentException("Password is required");
-            if (password.Length < 8)
-                throw new ArgumentException("Password must be at least 8 characters long");
-
-            var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(password, passwordPattern))
-                throw new ArgumentException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
 
         private void ValidatePhoneNumber(string? phoneNumber)
