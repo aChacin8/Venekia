@@ -11,7 +11,7 @@ namespace Venekia.Infrastructure.Data.Finance
         {
             entity.ToTable("Wallets", "dbo");
             entity.HasKey(w => w.Id);
-            entity.Property(w => w.Id).HasColumnName("Id").HasDefaultValueSql("NEWID()"); ;
+            entity.Property(w => w.Id).HasColumnName("Id").HasDefaultValueSql("NEWID()");
             entity.Property(w => w.UserId).HasColumnName("UserId").IsRequired();
             entity.HasOne(w => w.User).WithOne(u => u.Wallet).HasForeignKey<Wallet>(w => w.UserId).OnDelete(DeleteBehavior.Cascade);
 
