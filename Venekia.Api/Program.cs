@@ -9,6 +9,11 @@ using Venekia.Infrastructure.Data;
 using Venekia.Infrastructure.Services.Auth;
 using Venekia.Infrastructure.Repositories.Users;
 using Venekia.Application.Interfaces.Users;
+using Venekia.Application.Interfaces.Finance.Wallets;
+using Venekia.Application.Services.Finance.Wallets;
+using Venekia.Infrastructure.Repositories.Finance.Wallets;
+using Venekia.Application.Interfaces.Common;
+using Venekia.Infrastructure.Repositories.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,12 +64,15 @@ builder.Services.AddDbContext<VenekiaDb>(options =>
 
 // Repositorios (Infraestructura)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Scoped: una instancia por request HTTP
 
 // Servicios de dominio / aplicación
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
 
 #endregion
 
