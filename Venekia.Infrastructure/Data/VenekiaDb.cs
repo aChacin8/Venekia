@@ -13,6 +13,7 @@ namespace Venekia.Infrastructure.Data
 
         public DbSet<User> Users => Set<User>(); // Mapea en la entidad de EfCore de User.
         public DbSet<Wallet> Wallets => Set<Wallet>();
+        public DbSet<WalletTransaction> WTransactions => Set<WalletTransaction>(); 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) // Configura las entidades usando las configuraciones definidas.
         {
