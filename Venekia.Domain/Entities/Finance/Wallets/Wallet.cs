@@ -1,5 +1,4 @@
 ﻿using Venekia.Domain.Entities.Users;
-using Venekia.Domain.Entities.Finance.Transactions;
 
 namespace Venekia.Domain.Entities.Finance.Wallets
 {
@@ -13,7 +12,7 @@ namespace Venekia.Domain.Entities.Finance.Wallets
         public User User { get; private set; } = null!;
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
-        public Transaction Transaction { get; private set; } = null!;
+        public WalletTransaction Transaction { get; private set; } = null!;
 
         public Wallet() {}
 
