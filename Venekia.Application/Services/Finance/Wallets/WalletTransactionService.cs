@@ -12,14 +12,8 @@ namespace Venekia.Application.Services.Finance.Wallets
             _transactionsRepository = transactionsRepository;
         }
 
-        public async Task RegisterCreditAsync (Wallet wallet, decimal amount, string reference)
+        public async Task RegisterCreditAsync (Wallet wallet, decimal amount, decimal balanceBefore, decimal balanceAfter, string reference)
         {
-            var balanceBefore = wallet.Balance;
-
-            wallet.Credit(amount);
-
-            var balanceAfter = wallet.Balance;
-
             var transaction = new WalletTransaction(
                 wallet.Id,
                 WalletTransaction.TransactionType.Credit,
@@ -32,14 +26,8 @@ namespace Venekia.Application.Services.Finance.Wallets
             await _transactionsRepository.AddAsyncTransaction(transaction);
         }
 
-        public async Task RegisterDebitAsync (Wallet wallet, decimal amount, string reference)
+        public async Task RegisterDebitAsync (Wallet wallet, decimal amount, decimal balanceBefore, decimal balanceAfter, string reference)
         {
-            var balanceBefore = wallet.Balance;
-
-            wallet.Debit(amount);
-
-            var balanceAfter = wallet.Balance;
-
             var transaction = new WalletTransaction(
                 wallet.Id,
                 WalletTransaction.TransactionType.Debit,
