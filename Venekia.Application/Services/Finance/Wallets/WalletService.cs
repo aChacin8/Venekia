@@ -9,11 +9,13 @@ namespace Venekia.Application.Services.Finance.Wallets
     {
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWalletTransactionService _transactionService;
 
-        public WalletService (IWalletRepository walletRepository, IUnitOfWork unitOfWork )
+        public WalletService (IWalletRepository walletRepository, IUnitOfWork unitOfWork ,IWalletTransactionService transactionService)
         {
             _walletRepository = walletRepository;
             _unitOfWork = unitOfWork;
+            _transactionService = transactionService;
         }
 
         public async Task <WalletResponseDto> CreateWalletAsync(Guid userId, CreateWalletDto createWalletDto)
@@ -39,25 +41,34 @@ namespace Venekia.Application.Services.Finance.Wallets
 
         public async Task<WalletResponseDto> CreditAsync (Guid userId, CreditWalletDto creditWalletDto)
         {
-            var wallet = await _walletRepository.GetByUserIdAndCurrencyAsync(userId, creditWalletDto.Currency);
-            if (wallet == null)
-                throw new InvalidOperationException("Wallet not found for the specified user and currency.");
+            await _unitOfWork.BeginTransactionAsync();
 
-            if (creditWalletDto.Amount <= 0)
-                throw new Exception("Amount must be greater than zero.");
-
-            wallet.Credit(creditWalletDto.Amount);
-
-            await _walletRepository.UpdateAsyncWallet(wallet);
-
-            return new WalletResponseDto
+            try
             {
-                Id = wallet.Id,
-                UserId = wallet.UserId,
-                Balance = wallet.Balance,
-                Currency = wallet.Currency,
-                Status = wallet.Status.ToString()
-            };
+                var wallet = await _walletRepository.GetByUserIdAndCurrencyAsync(userId, creditWalletDto.Currency);
+                if (wallet == null)
+                    throw new InvalidOperationException("Wallet not found for the specified user and currency.");
+
+                ValidateAmount(creditWalletDto.Amount);
+
+                var beforeBalance = wallet.Balance;
+
+                wallet.Credit(creditWalletDto.Amount);
+
+                var afterBalance = wallet.Balance;
+
+                await _walletRepository.UpdateAsyncWallet(wallet);
+                await _transactionService.RegisterCreditAsync(wallet, creditWalletDto.Amount, beforeBalance, afterBalance, $"Credit: {creditWalletDto.Currency}");
+                
+                await _unitOfWork.CommitAsync();
+
+                return MapToWalletResponseDto(wallet);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<WalletResponseDto> DebitAsync (Guid userId, DebitWalletDto debitWalletDto)
@@ -70,22 +81,20 @@ namespace Venekia.Application.Services.Finance.Wallets
                 if (wallet == null)
                     throw new InvalidOperationException("Wallet not found for the specified user and currency.");
 
-                if (debitWalletDto.Amount <= 0)
-                    throw new Exception("Amount must be greater than zero.");
+                ValidateAmount(debitWalletDto.Amount);
+
+                var balanceBefore = wallet.Balance;
 
                 wallet.Debit(debitWalletDto.Amount);
+                
+                var balanceAfter = wallet.Balance;
 
                 await _walletRepository.UpdateAsyncWallet(wallet);
+                await _transactionService.RegisterDebitAsync(wallet, debitWalletDto.Amount, balanceBefore, balanceAfter, $"Debit: {debitWalletDto.Currency}");
+
                 await _unitOfWork.CommitAsync();
 
-                return new WalletResponseDto
-                {
-                    Id = wallet.Id,
-                    UserId = wallet.UserId,
-                    Balance = wallet.Balance,
-                    Currency = wallet.Currency,
-                    Status = wallet.Status.ToString()
-                };
+                return MapToWalletResponseDto(wallet);
             }
             catch
             {
@@ -95,20 +104,30 @@ namespace Venekia.Application.Services.Finance.Wallets
         }
         public async Task<List<WalletResponseDto>> GetWalletByUserAsync(Guid userId)
         {
-            var existingWallet = await _walletRepository.GetWalletsByUserIdAsync(userId);
-            if (!existingWallet.Any())
-                throw new Exception("No wallets found for this user.");
+            var wallets = await _walletRepository.GetWalletsByUserIdAsync(userId);
 
-            var wallet = existingWallet.Select(wallet => new WalletResponseDto
+            if (!wallets.Any())
+                throw new InvalidOperationException("No wallets found.");
+
+            return wallets.Select(MapToWalletResponseDto).ToList();
+        }
+
+        private static void ValidateAmount(decimal amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
+        }
+
+        private static WalletResponseDto MapToWalletResponseDto(Wallet wallet)
+        {
+            return new WalletResponseDto
             {
                 Id = wallet.Id,
                 UserId = wallet.UserId,
                 Balance = wallet.Balance,
                 Currency = wallet.Currency,
                 Status = wallet.Status.ToString()
-            }).ToList();
-
-            return wallet;
+            };
         }
     }
 }
