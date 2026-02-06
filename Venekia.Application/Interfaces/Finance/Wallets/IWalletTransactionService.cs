@@ -4,8 +4,8 @@ namespace Venekia.Application.Interfaces.Finance.Wallets
 {
     public interface IWalletTransactionService
     {
-        Task RegisterCreditAsync(Wallet wallet, decimal amount, decimal balanceBefore, decimal balanceAfter, string reference);
-        Task RegisterDebitAsync (Wallet wallet, decimal amount, decimal balanceBefore, decimal balanceAfter, string reference);
-        Task<List<WalletTransaction>>  GetTransactionHistoryAsync(Guid walletId);
+        Task RegisterTransactionAsync(Wallet wallet, WalletTransaction.TransactionType type,  decimal amount, decimal balanceBefore, decimal balanceAfter, string reference);
+        Task<List<WalletTransaction>> GetAllTransactionsAsync(Guid walletId);
+        Task<WalletTransaction?> GetOneTransactionByIdAsync(Guid walletId, Guid transactionId);
     }
 }
