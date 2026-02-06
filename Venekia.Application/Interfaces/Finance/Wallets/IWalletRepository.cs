@@ -1,5 +1,4 @@
 ﻿using Venekia.Domain.Entities.Finance.Wallets;
-using Venekia.Domain.Entities.Users;
 
 namespace Venekia.Application.Interfaces.Finance.Wallets
 {
