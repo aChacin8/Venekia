@@ -6,6 +6,6 @@ namespace Venekia.Application.Interfaces.Finance.Wallets
     {
         Task AddAsyncTransaction(WalletTransaction transaction);
         Task<List<WalletTransaction>> GetTransactionsAsync(Guid walletId);
-        Task<WalletTransaction?> GetTransactionByIdAsync(Guid transactionId);
+        Task<WalletTransaction?> GetTransactionByWalletAndIdAsync(Guid walletId, Guid transactionId);
     }
 }
