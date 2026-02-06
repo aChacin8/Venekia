@@ -8,6 +8,7 @@ namespace Venekia.Infrastructure.Repositories.Finance.Wallets
     public class WalletRepository : IWalletRepository
     {
         private readonly VenekiaDb _context;
+
         public WalletRepository(VenekiaDb context)
         {
             _context = context;
@@ -16,18 +17,18 @@ namespace Venekia.Infrastructure.Repositories.Finance.Wallets
         public async Task AddAsyncWallet(Wallet wallet)
         {
             await _context.Wallets.AddAsync(wallet);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsyncWallet(Wallet wallet)
+        public Task UpdateAsyncWallet(Wallet wallet)
         {
             _context.Wallets.Update(wallet);
-            await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
-        public async Task DeleteAsyncWallet(Wallet wallet) {
+        public Task DeleteAsyncWallet(Wallet wallet)
+        {
             _context.Wallets.Remove(wallet);
-            await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public async Task<List<Wallet>> GetWalletsByUserIdAsync(Guid userId)
@@ -36,6 +37,7 @@ namespace Venekia.Infrastructure.Repositories.Finance.Wallets
                 .Where(w => w.UserId == userId)
                 .ToListAsync();
         }
+
         public async Task<Wallet?> GetByUserIdAndCurrencyAsync(Guid userId, string currency)
         {
             return await _context.Wallets
