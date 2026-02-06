@@ -63,9 +63,10 @@ builder.Services.AddDbContext<VenekiaDb>(options =>
 #region Dependency Injection (Application Layer)
 
 // Repositorios (Infraestructura)
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IWalletTransactionsRepository, WalletTransactionRepository>();
 // Scoped: una instancia por request HTTP
 
 // Servicios de dominio / aplicación
@@ -73,6 +74,7 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<IWalletTransactionService, WalletTransactionService>();
 
 #endregion
 
