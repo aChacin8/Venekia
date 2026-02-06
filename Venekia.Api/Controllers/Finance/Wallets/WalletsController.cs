@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Venekia.Application.DTOs.Finance.Wallet;
 using Venekia.Application.DTOs.Security;
@@ -12,6 +10,7 @@ namespace Venekia.Api.Controllers.Finance.Wallets
     [ApiController]
     [Route ("api/wallets")]
     [Authorize]
+
     public class WalletsController : ControllerBase
     {
         private readonly IWalletService _walletService; 
